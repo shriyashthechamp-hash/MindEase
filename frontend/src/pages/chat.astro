@@ -1,0 +1,14 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import Chatbot from '../components/Chatbot';
+---
+
+<DashboardLayout title="MindEase - MindMate AI">
+    <div className="max-w-4xl mx-auto h-full flex flex-col justify-center">
+        <div className="mb-6 text-center">
+            <h1 className="text-3xl font-heading font-bold text-gray-800 mb-2">Chat with MindMate 🌿</h1>
+            <p className="text-gray-500">A safe, judgment-free space to share your thoughts.</p>
+        </div>
+        <Chatbot client:load />
+    </div>
+</DashboardLayout>

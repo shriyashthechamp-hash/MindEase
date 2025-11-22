@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  ageGroup  String?  // "Teen" or "Adult"
+  concern   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  moods     MoodLog[]
+  sessions  Session[]
+}
+
+model Psychologist {
+  id             Int      @id @default(autoincrement())
+  name           String
+  email          String   @unique
+  specialization String
+  experience     String
+  rating         Float    @default(0.0)
+  image          String?
+  isVerified     Boolean  @default(false)
+  sessions       Session[]
+}
+
+model Session {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  psychologistId Int
+  date           DateTime
+  type           String   // "Chat", "Voice", "Video"
+  status         String   // "Scheduled", "Completed", "Cancelled"
+  user           User     @relation(fields: [userId], references: [id])
+  psychologist   Psychologist @relation(fields: [psychologistId], references: [id])
+}
+
+model MoodLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  mood      String
+  note      String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}

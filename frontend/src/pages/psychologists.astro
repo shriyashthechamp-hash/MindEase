@@ -1,0 +1,81 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import PsychologistCard from '../components/PsychologistCard';
+import { Search, Filter } from 'lucide-react';
+
+const psychologists = [
+    {
+        name: "Dr. Ananya Sharma",
+        specialization: "Anxiety & Stress",
+        experience: "8 Years",
+        rating: 4.9,
+        image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200&h=200"
+    },
+    {
+        name: "Dr. Rahul Verma",
+        specialization: "Career Counseling",
+        experience: "12 Years",
+        rating: 4.8,
+        image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=200&h=200"
+    },
+    {
+        name: "Ms. Sarah Jenkins",
+        specialization: "Relationship Therapy",
+        experience: "5 Years",
+        rating: 4.7,
+        image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=200&h=200"
+    },
+    {
+        name: "Dr. Aravind Patel",
+        specialization: "Depression",
+        experience: "15 Years",
+        rating: 4.9,
+        image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=200&h=200"
+    },
+    {
+        name: "Ms. Emily Chen",
+        specialization: "Teen Issues",
+        experience: "6 Years",
+        rating: 4.6,
+        image: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=200&h=200"
+    },
+    {
+        name: "Dr. Michael Ross",
+        specialization: "Trauma Recovery",
+        experience: "10 Years",
+        rating: 4.8,
+        image: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=200&h=200"
+    }
+];
+---
+
+<DashboardLayout title="MindEase - Psychologists">
+    <div className="max-w-6xl mx-auto">
+        <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 className="text-3xl font-heading font-bold text-gray-800 mb-2">Find Your Guide 🌿</h1>
+                <p className="text-gray-500">Connect with verified professionals who understand you.</p>
+            </div>
+            
+            <div className="flex gap-2">
+                <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input 
+                        type="text" 
+                        placeholder="Search by name or issue..." 
+                        className="pl-10 pr-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:border-pastel-blue w-64"
+                    />
+                </div>
+                <button className="p-2 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-600">
+                    <Filter className="w-5 h-5" />
+                </button>
+            </div>
+        </header>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {psychologists.map(psych => (
+                <PsychologistCard client:load {...psych} />
+            ))}
+        </div>
+    </div>
+</DashboardLayout>

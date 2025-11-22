@@ -1,0 +1,60 @@
+---
+import DashboardLayout from '../layouts/DashboardLayout.astro';
+import PsychologistCard from '../components/PsychologistCard';
+import MoodCheckIn from '../components/MoodCheckIn';
+import DailyQuote from '../components/DailyQuote';
+
+const psychologists = [
+    {
+        name: "Dr. Ananya Sharma",
+        specialization: "Anxiety & Stress",
+        experience: "8 Years",
+        rating: 4.9,
+        image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200&h=200"
+    },
+    {
+        name: "Dr. Rahul Verma",
+        specialization: "Career Counseling",
+        experience: "12 Years",
+        rating: 4.8,
+        image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=200&h=200"
+    },
+    {
+        name: "Ms. Sarah Jenkins",
+        specialization: "Relationship Therapy",
+        experience: "5 Years",
+        rating: 4.7,
+        image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=200&h=200"
+    }
+];
+---
+
+<DashboardLayout title="MindEase - Dashboard">
+    <div className="max-w-6xl mx-auto">
+        <header className="mb-8">
+            <h1 className="text-3xl font-heading font-bold text-gray-800">Welcome back, Friend 🌿</h1>
+            <p className="text-gray-500">Here's your safe space for today.</p>
+        </header>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            <div className="lg:col-span-2 space-y-8">
+                <section>
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-xl font-heading font-semibold text-gray-700">Recommended for You</h2>
+                        <a href="/psychologists" className="text-pastel-blue hover:text-pastel-blue/80 text-sm font-medium">View All</a>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-4">
+                        {psychologists.slice(0, 2).map(psych => (
+                            <PsychologistCard client:load {...psych} />
+                        ))}
+                    </div>
+                </section>
+            </div>
+
+            <div className="space-y-6">
+                <MoodCheckIn client:load />
+                <DailyQuote client:load />
+            </div>
+        </div>
+    </div>
+</DashboardLayout>
