@@ -24,40 +24,76 @@ export default function OnboardingFlow() {
     const handleConcernSelect = (concern: string) => {
         setSelectedConcern(concern);
         setStep('matching');
-        // Simulate matching process then redirect
         setTimeout(() => {
             window.location.href = '/dashboard';
         }, 3000);
     };
 
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+    React.useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            setMousePosition({
+                x: e.clientX,
+                y: e.clientY
+            });
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, []);
+
     return (
-        <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <div className="min-h-screen flex items-center justify-center bg-background p-4 overflow-hidden relative bg-gradient-to-br from-rose-100 via-purple-100 to-cyan-100">
+            {/* Interactive Vibrant Background Blobs */}
+            <motion.div
+                animate={{ x: mousePosition.x * -0.02, y: mousePosition.y * -0.02 }}
+                transition={{ type: "spring", damping: 30, stiffness: 200 }}
+                className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-pink-500/30 rounded-full blur-[100px] mix-blend-multiply"
+            ></motion.div>
+            <motion.div
+                animate={{ x: mousePosition.x * 0.03, y: mousePosition.y * 0.03 }}
+                transition={{ type: "spring", damping: 30, stiffness: 200 }}
+                className="absolute top-[10%] right-[-10%] w-[40%] h-[40%] bg-purple-500/30 rounded-full blur-[100px] mix-blend-multiply"
+            ></motion.div>
+            <motion.div
+                animate={{ x: mousePosition.x * -0.04, y: mousePosition.y * -0.04 }}
+                transition={{ type: "spring", damping: 30, stiffness: 200 }}
+                className="absolute bottom-[-10%] left-[10%] w-[40%] h-[40%] bg-cyan-500/30 rounded-full blur-[100px] mix-blend-multiply"
+            ></motion.div>
+            <motion.div
+                animate={{ x: mousePosition.x * 0.02, y: mousePosition.y * 0.02 }}
+                transition={{ type: "spring", damping: 30, stiffness: 200 }}
+                className="absolute bottom-[10%] right-[20%] w-[30%] h-[30%] bg-yellow-400/30 rounded-full blur-[100px] mix-blend-multiply"
+            ></motion.div>
+
             <AnimatePresence mode="wait">
                 {step === 'age' && (
                     <motion.div
                         key="age"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="max-w-md w-full text-center"
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 1.1, y: -20 }}
+                        className="max-w-3xl w-full text-center relative z-10"
                     >
-                        <h2 className="text-3xl font-heading font-bold text-pastel-text mb-8">
+                        <h2 className="text-4xl md:text-5xl font-heading font-bold text-gray-800 mb-10 leading-tight drop-shadow-sm">
                             Are you a Teen or an Adult?
                         </h2>
-                        <div className="grid grid-cols-2 gap-6">
+                        <div className="grid grid-cols-2 gap-8">
                             <button
                                 onClick={() => handleAgeSelect('Teen')}
-                                className="p-8 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-pastel-blue group"
+                                className="p-8 rounded-[2rem] bg-white/60 backdrop-blur-xl shadow-xl hover:shadow-[0_20px_40px_rgba(255,183,197,0.3)] transition-all transform hover:-translate-y-2 border border-white/60 group relative overflow-hidden"
                             >
-                                <span className="text-4xl mb-4 block">🎒</span>
-                                <span className="text-xl font-semibold text-gray-700 group-hover:text-pastel-blue">Teen</span>
+                                <div className="absolute inset-0 bg-gradient-to-br from-pastel-peach/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                <span className="text-6xl mb-6 block transform group-hover:scale-110 transition-transform duration-300 drop-shadow-md">🎒</span>
+                                <span className="text-2xl font-bold text-gray-700 group-hover:text-pastel-peach-dark transition-colors">Teen</span>
                             </button>
                             <button
                                 onClick={() => handleAgeSelect('Adult')}
-                                className="p-8 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-pastel-peach group"
+                                className="p-8 rounded-[2rem] bg-white/60 backdrop-blur-xl shadow-xl hover:shadow-[0_20px_40px_rgba(175,238,238,0.3)] transition-all transform hover:-translate-y-2 border border-white/60 group relative overflow-hidden"
                             >
-                                <span className="text-4xl mb-4 block">💼</span>
-                                <span className="text-xl font-semibold text-gray-700 group-hover:text-pastel-peach">Adult</span>
+                                <div className="absolute inset-0 bg-gradient-to-br from-pastel-aqua/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                <span className="text-6xl mb-6 block transform group-hover:scale-110 transition-transform duration-300 drop-shadow-md">💼</span>
+                                <span className="text-2xl font-bold text-gray-700 group-hover:text-pastel-aqua-dark transition-colors">Adult</span>
                             </button>
                         </div>
                     </motion.div>
@@ -66,24 +102,28 @@ export default function OnboardingFlow() {
                 {step === 'concern' && (
                     <motion.div
                         key="concern"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="max-w-lg w-full text-center"
+                        initial={{ opacity: 0, x: 50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -50 }}
+                        className="max-w-3xl w-full text-center relative z-10"
                     >
-                        <h2 className="text-3xl font-heading font-bold text-pastel-text mb-8">
-                            What are you currently struggling with?
+                        <h2 className="text-4xl font-heading font-bold text-gray-800 mb-10">
+                            What are you currently <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-pastel-mint-dark to-pastel-aqua-dark">struggling with?</span>
                         </h2>
-                        <div className="grid grid-cols-2 gap-4">
-                            {concerns.map((concern) => (
-                                <button
+                        <div className="grid grid-cols-2 gap-5">
+                            {concerns.map((concern, index) => (
+                                <motion.button
                                     key={concern}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: index * 0.1 }}
                                     onClick={() => handleConcernSelect(concern)}
-                                    className="p-4 rounded-xl bg-white shadow-sm hover:shadow-md transition-all text-left flex items-center justify-between group border border-gray-100 hover:border-pastel-green"
+                                    className="p-5 rounded-2xl bg-white/70 backdrop-blur-md shadow-sm hover:shadow-lg transition-all text-left flex items-center justify-between group border border-white/60 hover:border-pastel-mint-dark hover:bg-white relative overflow-hidden"
                                 >
-                                    <span className="font-medium text-gray-700 group-hover:text-pastel-green">{concern}</span>
-                                    <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 text-pastel-green transition-opacity" />
-                                </button>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-pastel-mint/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                    <span className="font-semibold text-gray-700 group-hover:text-pastel-mint-dark relative z-10">{concern}</span>
+                                    <ArrowRight className="w-5 h-5 opacity-0 group-hover:opacity-100 text-pastel-mint-dark transition-all transform group-hover:translate-x-1 relative z-10" />
+                                </motion.button>
                             ))}
                         </div>
                     </motion.div>
@@ -94,23 +134,24 @@ export default function OnboardingFlow() {
                         key="matching"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="text-center"
+                        className="text-center relative z-10"
                     >
-                        <div className="mb-8 relative">
-                            <div className="w-24 h-24 mx-auto border-4 border-pastel-blue/30 border-t-pastel-blue rounded-full animate-spin"></div>
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <span className="text-2xl">🌿</span>
+                        <div className="mb-10 relative flex justify-center">
+                            <div className="absolute inset-0 bg-pastel-peach/30 rounded-full blur-xl animate-pulse"></div>
+                            <div className="w-32 h-32 border-4 border-pastel-peach/30 border-t-pastel-peach-dark rounded-full animate-spin relative z-10"></div>
+                            <div className="absolute inset-0 flex items-center justify-center z-20">
+                                <span className="text-5xl animate-bounce">🌿</span>
                             </div>
                         </div>
-                        <h3 className="text-2xl font-heading font-semibold text-pastel-text mb-2">
+                        <h3 className="text-3xl font-heading font-bold text-gray-800 mb-4">
                             Finding your safe space...
                         </h3>
-                        <p className="text-gray-500">
+                        <p className="text-gray-500 text-lg font-medium">
                             We found the best-matched psychologists for you.
                         </p>
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div>
+        </div >
     );
 }

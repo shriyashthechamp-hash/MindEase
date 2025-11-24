@@ -30,7 +30,6 @@ export default function Chatbot() {
         setInput('');
         setIsTyping(true);
 
-        // Simulate AI delay
         setTimeout(() => {
             const botResponse: Message = {
                 id: Date.now() + 1,
@@ -57,33 +56,33 @@ export default function Chatbot() {
     };
 
     return (
-        <div className="flex flex-col h-[600px] bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="flex flex-col h-[600px] glass-panel rounded-[2.5rem] overflow-hidden border border-white/60 shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
             {/* Header */}
-            <div className="bg-pastel-lavender/30 p-4 flex items-center gap-3 border-b border-gray-100">
-                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
-                    <Bot className="w-6 h-6 text-pastel-blue" />
+            <div className="bg-white/60 backdrop-blur-md p-5 flex items-center gap-4 border-b border-white/30">
+                <div className="w-14 h-14 bg-gradient-to-br from-pastel-peach-dark to-pastel-lavender-dark rounded-full flex items-center justify-center shadow-lg ring-4 ring-white/50">
+                    <Bot className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                    <h3 className="font-heading font-bold text-gray-700">MindMate</h3>
-                    <p className="text-xs text-gray-500 flex items-center gap-1">
-                        <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                    <h3 className="font-heading font-bold text-gray-800 text-xl">MindMate</h3>
+                    <p className="text-xs text-gray-500 flex items-center gap-1.5 font-semibold uppercase tracking-wide">
+                        <span className="w-2 h-2 bg-pastel-mint-dark rounded-full animate-pulse"></span>
                         Always here for you
                     </p>
                 </div>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50">
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-white/30 scroll-smooth">
                 {messages.map((msg) => (
                     <motion.div
                         key={msg.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
                         className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
-                        <div className={`max-w-[80%] p-4 rounded-2xl ${msg.sender === 'user'
-                                ? 'bg-pastel-green/20 text-gray-800 rounded-tr-none'
-                                : 'bg-white text-gray-700 shadow-sm rounded-tl-none border border-gray-100'
+                        <div className={`max-w-[80%] p-5 rounded-3xl shadow-sm ${msg.sender === 'user'
+                                ? 'bg-gradient-to-r from-pastel-peach-dark to-pastel-lavender-dark text-white rounded-tr-none shadow-pastel-peach/30'
+                                : 'bg-white/80 backdrop-blur-sm text-gray-700 rounded-tl-none border border-white/60 shadow-sm'
                             }`}>
                             {msg.text}
                         </div>
@@ -91,10 +90,10 @@ export default function Chatbot() {
                 ))}
                 {isTyping && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-                        <div className="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 flex gap-1">
-                            <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce"></span>
-                            <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
-                            <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
+                        <div className="bg-white/80 p-5 rounded-3xl rounded-tl-none shadow-sm border border-white/60 flex gap-2">
+                            <span className="w-2.5 h-2.5 bg-pastel-peach-dark rounded-full animate-bounce"></span>
+                            <span className="w-2.5 h-2.5 bg-pastel-peach-dark rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+                            <span className="w-2.5 h-2.5 bg-pastel-peach-dark rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
                         </div>
                     </motion.div>
                 )}
@@ -102,21 +101,21 @@ export default function Chatbot() {
             </div>
 
             {/* Input */}
-            <div className="p-4 bg-white border-t border-gray-100">
-                <div className="flex gap-2">
+            <div className="p-5 bg-white/70 backdrop-blur-md border-t border-white/30">
+                <div className="flex gap-3">
                     <input
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                         placeholder="Type your message..."
-                        className="flex-1 p-3 rounded-xl border border-gray-200 focus:outline-none focus:border-pastel-blue focus:ring-1 focus:ring-pastel-blue/50 transition-all"
+                        className="flex-1 p-4 rounded-2xl border border-white/60 bg-white/60 focus:outline-none focus:border-pastel-peach-dark focus:ring-2 focus:ring-pastel-peach/20 transition-all placeholder-gray-400 text-gray-700"
                     />
                     <button
                         onClick={handleSend}
-                        className="p-3 bg-pastel-blue text-white rounded-xl hover:bg-pastel-blue/90 transition-colors shadow-sm hover:shadow-md"
+                        className="p-4 bg-gradient-to-r from-pastel-peach-dark to-pastel-lavender-dark text-white rounded-2xl hover:shadow-lg hover:shadow-pastel-peach/40 transform hover:scale-105 active:scale-95 transition-all duration-300"
                     >
-                        <Send className="w-5 h-5" />
+                        <Send className="w-6 h-6" />
                     </button>
                 </div>
             </div>
