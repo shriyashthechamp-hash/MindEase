@@ -1,46 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check } from 'lucide-react';
 
-const concerns = [
-    "Exam Stress",
-    "Anxiety",
-    "Work Pressure",
-    "Depression",
-    "Relationship Stress",
-    "Overthinking"
-];
-
 export default function OnboardingFlow() {
-    const [step, setStep] = useState<'age' | 'concern' | 'matching'>('age');
-    const [ageGroup, setAgeGroup] = useState<'Teen' | 'Adult' | null>(null);
-    const [selectedConcern, setSelectedConcern] = useState<string | null>(null);
+    const [step, setStep] = useState('age'); // age, concern, matching
+    const [ageGroup, setAgeGroup] = useState(null);
+    const [selectedConcern, setSelectedConcern] = useState(null);
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-    const handleAgeSelect = (group: 'Teen' | 'Adult') => {
+    useEffect(() => {
+        const handleMouseMove = (e) => {
+            setMousePosition({
+                x: e.clientX - window.innerWidth / 2,
+                y: e.clientY - window.innerHeight / 2
+            });
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, []);
+
+    const concerns = [
+        "Anxiety & Stress", "Depression", "Relationship Issues",
+        "Career Guidance", "Sleep Problems", "Self-Esteem"
+    ];
+
+    const handleAgeSelect = (group) => {
         setAgeGroup(group);
         setStep('concern');
     };
 
-    const handleConcernSelect = (concern: string) => {
+    const handleConcernSelect = (concern) => {
         setSelectedConcern(concern);
         setStep('matching');
         setTimeout(() => {
             window.location.href = '/dashboard';
         }, 3000);
     };
-
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-    React.useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
-            setMousePosition({
-                x: e.clientX,
-                y: e.clientY
-            });
-        };
-        window.addEventListener('mousemove', handleMouseMove);
-        return () => window.removeEventListener('mousemove', handleMouseMove);
-    }, []);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-background p-4 overflow-hidden relative bg-gradient-to-br from-rose-100 via-purple-100 to-cyan-100">
@@ -152,6 +147,6 @@ export default function OnboardingFlow() {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div >
+        </div>
     );
 }

@@ -4,82 +4,57 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				pastel: {
-					peach: '#FF9EAA',       // More vibrant peach/pink
-					'peach-dark': '#FF7F94',
-					lavender: '#C3B1E1',    // Deeper lavender
-					'lavender-dark': '#A78BFA',
-					aqua: '#7FDBFF',        // Brighter aqua
-					'aqua-dark': '#39C0ED',
-					mint: '#77DD77',        // Pastel green but stronger
-					'mint-dark': '#4CAF50',
-					yellow: '#FDFD96',      // Brighter yellow
-					'yellow-dark': '#F0E68C',
-					text: '#2D3748',
+				// Neobrutalist color palette - bold and vibrant
+				brutal: {
+					yellow: '#FFEB3B',
+					pink: '#FF006E',
+					blue: '#00B4D8',
+					green: '#06FFA5',
+					purple: '#9D4EDD',
+					orange: '#FF6B35',
+					red: '#EF476F',
+					black: '#000000',
+					white: '#FFFFFF',
+					cream: '#FFF8E7',
 				},
-				primary: {
-					DEFAULT: '#FFB7C5', // Peach as primary
-					foreground: '#FFFFFF',
-				},
-				secondary: {
-					DEFAULT: '#AFEEEE', // Aqua as secondary
-					foreground: '#4A4A4A',
-				},
-				accent: {
-					DEFAULT: '#D8BFD8', // Lavender as accent
-					foreground: '#4A4A4A',
-				},
-				background: '#FDFCF0', // Very warm off-white/cream
 			},
 			fontFamily: {
-				sans: ['Poppins', 'sans-serif'],
-				heading: ['Raleway', 'sans-serif'],
-			},
-			borderRadius: {
-				'xl': '1rem',
-				'2xl': '1.5rem',
-				'3xl': '2rem',
-				'4xl': '2.5rem',
-			},
-			animation: {
-				'float': 'float 6s ease-in-out infinite',
-				'float-delayed': 'float 6s ease-in-out 3s infinite',
-				'fade-in': 'fadeIn 0.8s ease-out forwards',
-				'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-				'blob': 'blob 10s infinite',
-				'glow': 'glow 2s ease-in-out infinite alternate',
-			},
-			keyframes: {
-				float: {
-					'0%, 100%': { transform: 'translateY(0)' },
-					'50%': { transform: 'translateY(-20px)' },
-				},
-				fadeIn: {
-					'0%': { opacity: '0', transform: 'translateY(20px)' },
-					'100%': { opacity: '1', transform: 'translateY(0)' },
-				},
-				blob: {
-					'0%': { transform: 'translate(0px, 0px) scale(1)' },
-					'33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-					'66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-					'100%': { transform: 'translate(0px, 0px) scale(1)' },
-				},
-				glow: {
-					'from': { boxShadow: '0 0 10px -10px #FFB7C5' },
-					'to': { boxShadow: '0 0 20px 5px #FFB7C5' }
-				}
-			},
-			backgroundImage: {
-				'gradient-zen': 'linear-gradient(135deg, #FFD1DC 0%, #E6E6FA 50%, #E0FFFF 100%)',
-				'gradient-warm': 'linear-gradient(135deg, #FFFACD 0%, #FFD1DC 100%)',
-				'gradient-cool': 'linear-gradient(135deg, #E0FFFF 0%, #E6E6FA 100%)',
+				sans: ['Space Grotesk', 'Poppins', 'sans-serif'],
+				heading: ['Space Grotesk', 'Raleway', 'sans-serif'],
+				mono: ['Space Mono', 'monospace'],
 			},
 			boxShadow: {
-				'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
-				'glass-hover': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
-				'glow': '0 0 20px rgba(255, 183, 197, 0.6)',
-			}
+				// Neobrutalist hard shadows (no blur)
+				'brutal': '4px 4px 0px 0px #000000',
+				'brutal-sm': '2px 2px 0px 0px #000000',
+				'brutal-lg': '6px 6px 0px 0px #000000',
+				'brutal-xl': '8px 8px 0px 0px #000000',
+				'brutal-pink': '6px 6px 0px 0px #FF006E',
+				'brutal-blue': '6px 6px 0px 0px #00B4D8',
+				'brutal-green': '6px 6px 0px 0px #06FFA5',
+				'brutal-yellow': '6px 6px 0px 0px #FFEB3B',
+			},
+			borderWidth: {
+				'3': '3px',
+				'4': '4px',
+				'5': '5px',
+			},
+			animation: {
+				'wiggle': 'wiggle 0.5s ease-in-out',
+				'shake': 'shake 0.5s ease-in-out',
+			},
+			keyframes: {
+				wiggle: {
+					'0%, 100%': { transform: 'rotate(-2deg)' },
+					'50%': { transform: 'rotate(2deg)' },
+				},
+				shake: {
+					'0%, 100%': { transform: 'translateX(0)' },
+					'25%': { transform: 'translateX(-4px)' },
+					'75%': { transform: 'translateX(4px)' },
+				},
+			},
 		},
 	},
 	plugins: [],
-}
+};

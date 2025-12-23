@@ -1,0 +1,41 @@
+---
+import { Phone, AlertCircle } from 'lucide-react';
+
+const helplines = [
+    { name: "AASRA", time: "24/7", phone: "91-9820466726" },
+    { name: "Vandrevala Foundation", time: "24/7", phone: "1860-2662-345" },
+    { name: "iCall", time: "Mon-Sat, 8am-10pm", phone: "022-25521111" },
+    { name: "Sneha India", time: "24/7", phone: "044-24640050" }
+];
+---
+
+<section class="py-20 bg-brutal-cream">
+    <div class="container mx-auto px-6 max-w-5xl">
+        <div class="bg-brutal-red border-4 border-black p-8 md:p-12 shadow-brutal-xl -rotate-1">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-16 h-16 bg-brutal-yellow border-4 border-black flex items-center justify-center shadow-brutal">
+                    <AlertCircle className="w-8 h-8 text-black" />
+                </div>
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-black text-black uppercase">Need Immediate Help?</h2>
+                    <p class="text-black font-bold mt-2">If you're experiencing a mental health crisis, please reach out to these helplines immediately.</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                {helplines.map((line, index) => (
+                    <div class={`bg-brutal-yellow p-6 border-4 border-black shadow-brutal-lg hover:shadow-brutal-xl transition-all duration-200 hover:translate-x-1 hover:translate-y-1 flex items-center justify-between ${index % 2 === 0 ? 'rotate-1' : '-rotate-1'}`}>
+                        <div>
+                            <h3 class="font-black text-black text-lg uppercase">{line.name}</h3>
+                            <p class="text-sm text-black font-bold">{line.time}</p>
+                        </div>
+                        <a href={`tel:${line.phone}`} class="flex items-center gap-2 px-5 py-3 bg-brutal-green border-4 border-black text-black font-black hover:bg-brutal-blue transition-colors shadow-brutal uppercase text-sm">
+                            <Phone className="w-4 h-4" />
+                            Call
+                        </a>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+</section>
