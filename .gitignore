@@ -27,3 +27,7 @@ yarn-error.log*
 # Prisma
 /backend/prisma/*.db
 /backend/prisma/*.db-journal
+
+# Vercel
+.vercel
+
