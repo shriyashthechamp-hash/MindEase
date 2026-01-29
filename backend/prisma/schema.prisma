@@ -3,51 +3,163 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+// Enums
+enum Role {
+  USER
+  PSYCHOLOGIST
+  ADMIN
+}
+
+enum SessionStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum SessionType {
+  CHAT
+  VOICE
+  VIDEO
+}
+
+enum PaymentStatus {
+  CREATED
+  PAID
+  FAILED
+  REFUNDED
+}
+
+// Models
+
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid()) // Supabase Auth ID
   email     String   @unique
-  password  String
   name      String?
-  ageGroup  String?  // "Teen" or "Adult"
-  concern   String?
+  role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  moods     MoodLog[]
-  sessions  Session[]
+
+  // Relations
+  profile        UserProfile?
+  moodLogs       MoodLog[]
+  communityPosts CommunityPost[]
+  reactions      Reaction[]
+  sessions       Session[]
+  payments       Payment[]
+}
+
+model UserProfile {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  ageGroup    String? // "13-17", "18-24", etc.
+  concerns    String[] // Array of concerns
+  bio         String?
+  isAnonymous Boolean  @default(false)
 }
 
 model Psychologist {
-  id             Int      @id @default(autoincrement())
-  name           String
-  email          String   @unique
-  specialization String
-  experience     String
-  rating         Float    @default(0.0)
-  image          String?
-  isVerified     Boolean  @default(false)
-  sessions       Session[]
-}
+  id              String   @id @default(uuid())
+  email           String   @unique
+  name            String
+  bio             String?
+  specialization  String[]
+  experienceYears Int      @default(0)
+  hourlyRate      Decimal  @default(0.0)
+  isVerified      Boolean  @default(false)
+  image           String?
 
-model Session {
-  id             Int      @id @default(autoincrement())
-  userId         Int
-  psychologistId Int
-  date           DateTime
-  type           String   // "Chat", "Voice", "Video"
-  status         String   // "Scheduled", "Completed", "Cancelled"
-  user           User     @relation(fields: [userId], references: [id])
-  psychologist   Psychologist @relation(fields: [psychologistId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions Session[]
 }
 
 model MoodLog {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  mood      String
-  note      String?
+  id     String   @id @default(uuid())
+  userId String
+  user   User     @relation(fields: [userId], references: [id])
+  mood   String // E.g., "Happy", "Anxious"
+  score  Int // 1-10
+  note   String?
+  tags   String[] // "Work", "Sleep", etc.
+
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model CommunityPost {
+  id          String  @id @default(uuid())
+  userId      String
+  user        User    @relation(fields: [userId], references: [id])
+  content     String
+  isAnonymous Boolean @default(true)
+
+  likes   Int @default(0)
+  reports Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reactions Reaction[]
+
+  @@index([createdAt])
+}
+
+model Reaction {
+  id     String        @id @default(uuid())
+  userId String
+  user   User          @relation(fields: [userId], references: [id])
+  postId String
+  post   CommunityPost @relation(fields: [postId], references: [id])
+  type   String // "Heart", "Hug", "Support"
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId, type]) // Prevent duplicate reactions of same type
+}
+
+model Session {
+  id             String       @id @default(uuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  psychologistId String
+  psychologist   Psychologist @relation(fields: [psychologistId], references: [id])
+
+  scheduledAt     DateTime
+  durationMinutes Int           @default(60)
+  type            SessionType   @default(VIDEO)
+  status          SessionStatus @default(PENDING)
+  meetingLink     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payment Payment?
+}
+
+model Payment {
+  id        String  @id @default(uuid())
+  sessionId String  @unique
+  session   Session @relation(fields: [sessionId], references: [id])
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+
+  amount    Decimal
+  currency  String        @default("INR")
+  orderId   String        @unique // Razorpay Order ID
+  paymentId String? // Razorpay Payment ID
+  status    PaymentStatus @default(CREATED)
+
+  commission Decimal? // Platform fee
+  payoutId   String? // For psychologist payout
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
