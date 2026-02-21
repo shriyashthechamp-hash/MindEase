@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
+import MoodCheckIn from '../components/MoodCheckIn.tsx';
 import DailyQuote from '../components/DailyQuote.tsx';
 import Features from '../components/Features.astro';
 import Helplines from '../components/Helplines.astro';
@@ -10,7 +11,10 @@ import CTA from '../components/CTA.astro';
 <Layout title="MindEase - Your Safe Space">
 	<main>
 		<Hero />
-        <div class="container mx-auto px-6 -mt-20 relative z-20 mb-20">
+        <div class="relative z-30 -mt-10 mb-10">
+            <MoodCheckIn client:visible />
+        </div>
+        <div class="container mx-auto px-6 relative z-20 mb-20">
             <DailyQuote client:load />
         </div>
         <Features />

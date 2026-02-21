@@ -16,106 +16,138 @@ export default function Chatbot() {
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
+    const fetchAIResponse = async (userMessage: string) => {
+        try {
+            const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${import.meta.env.PUBLIC_OPENROUTER_API_KEY || ''}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    model: "mistralai/mistral-7b-instruct",
+                    messages: [
+                        {
+                            role: "system",
+                            content: "You are MindEase AI, a calm, soft, emotionally supportive Gen-Z mental wellness companion. Validate feelings gently. Never diagnose medical conditions."
+                        },
+                        {
+                            role: "user",
+                            content: userMessage
+                        }
+                    ]
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            return data.choices[0].message.content;
+        } catch (error) {
+            console.error("AI Fetch Error:", error);
+            return "I'm so sorry, but I'm having a little trouble connecting right now. Please take a deep breath and try again in a moment. 🌿";
+        }
+    };
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
-    useEffect(scrollToBottom, [messages]);
+    useEffect(scrollToBottom, [messages, isTyping]);
 
     const handleSend = async () => {
-        if (!input.trim()) return;
+        if (!input.trim() || isTyping) return;
 
-        const userMessage: Message = { id: Date.now(), text: input, sender: 'user' };
+        const userText = input.trim();
+        const userMessage: Message = { id: Date.now(), text: userText, sender: 'user' };
+
         setMessages(prev => [...prev, userMessage]);
         setInput('');
         setIsTyping(true);
 
-        setTimeout(() => {
-            const botResponse: Message = {
-                id: Date.now() + 1,
-                text: getMockResponse(input),
-                sender: 'bot'
-            };
-            setMessages(prev => [...prev, botResponse]);
-            setIsTyping(false);
-        }, 1500);
-    };
+        const aiText = await fetchAIResponse(userText);
 
-    const getMockResponse = (text: string) => {
-        const lowerText = text.toLowerCase();
-        if (lowerText.includes('anxiety') || lowerText.includes('anxious')) {
-            return "I hear you. Anxiety can be overwhelming. Try taking a deep breath with me... Inhale for 4 seconds, hold for 7, and exhale for 8. Would you like to try a guided breathing exercise?";
-        }
-        if (lowerText.includes('sad') || lowerText.includes('depressed')) {
-            return "I'm sorry you're feeling this way. It's okay to not be okay. Remember, this feeling is temporary. Have you considered speaking with one of our specialists?";
-        }
-        if (lowerText.includes('stress') || lowerText.includes('work')) {
-            return "Work pressure is tough. Remember to prioritize yourself. Have you taken a small break today?";
-        }
-        return "Thank you for sharing that with me. I'm here to listen and support you. Tell me more about how that makes you feel.";
+        const botResponse: Message = {
+            id: Date.now() + 1,
+            text: aiText,
+            sender: 'bot'
+        };
+        setMessages(prev => [...prev, botResponse]);
+        setIsTyping(false);
     };
 
     return (
-        <div className="flex flex-col h-[600px] glass-panel rounded-[2.5rem] overflow-hidden border border-white/60 shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
+        <div className="flex flex-col h-[600px] bg-white border-2 border-gray-900 shadow-[8px_8px_0px_rgba(0,0,0,1)] rounded-[2.5rem] overflow-hidden">
             {/* Header */}
-            <div className="bg-white/60 backdrop-blur-md p-5 flex items-center gap-4 border-b border-white/30">
-                <div className="w-14 h-14 bg-gradient-to-br from-pastel-peach-dark to-pastel-lavender-dark rounded-full flex items-center justify-center shadow-lg ring-4 ring-white/50">
-                    <Bot className="w-8 h-8 text-white" />
+            <div className="bg-pastel-lavender/40 p-5 flex items-center gap-4 border-b-2 border-gray-900">
+                <div className="w-14 h-14 bg-pastel-peach rounded-2xl border-2 border-gray-900 flex items-center justify-center shadow-[4px_4px_0px_rgba(0,0,0,1)] transform -rotate-3">
+                    <Bot className="w-8 h-8 text-gray-900" />
                 </div>
                 <div>
-                    <h3 className="font-heading font-bold text-gray-800 text-xl">MindMate</h3>
-                    <p className="text-xs text-gray-500 flex items-center gap-1.5 font-semibold uppercase tracking-wide">
-                        <span className="w-2 h-2 bg-pastel-mint-dark rounded-full animate-pulse"></span>
+                    <h3 className="font-heading font-black text-gray-900 text-xl uppercase tracking-tight">MindMate</h3>
+                    <p className="text-xs text-gray-700 flex items-center gap-1.5 font-bold uppercase tracking-wide">
+                        <span className="w-2 h-2 bg-green-400 border border-gray-900 rounded-full animate-pulse shadow-[1px_1px_0px_rgba(0,0,0,1)]"></span>
                         Always here for you
                     </p>
                 </div>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-white/30 scroll-smooth">
-                {messages.map((msg) => (
-                    <motion.div
-                        key={msg.id}
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                        <div className={`max-w-[80%] p-5 rounded-3xl shadow-sm ${msg.sender === 'user'
-                                ? 'bg-gradient-to-r from-pastel-peach-dark to-pastel-lavender-dark text-white rounded-tr-none shadow-pastel-peach/30'
-                                : 'bg-white/80 backdrop-blur-sm text-gray-700 rounded-tl-none border border-white/60 shadow-sm'
-                            }`}>
-                            {msg.text}
-                        </div>
-                    </motion.div>
-                ))}
-                {isTyping && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-                        <div className="bg-white/80 p-5 rounded-3xl rounded-tl-none shadow-sm border border-white/60 flex gap-2">
-                            <span className="w-2.5 h-2.5 bg-pastel-peach-dark rounded-full animate-bounce"></span>
-                            <span className="w-2.5 h-2.5 bg-pastel-peach-dark rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
-                            <span className="w-2.5 h-2.5 bg-pastel-peach-dark rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
-                        </div>
-                    </motion.div>
-                )}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50 scroll-smooth">
+                <AnimatePresence initial={false}>
+                    {messages.map((msg) => (
+                        <motion.div
+                            key={msg.id}
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                        >
+                            <div className={`max-w-[80%] p-5 text-base font-medium border-2 border-gray-900 shadow-[4px_4px_0px_rgba(0,0,0,1)] ${msg.sender === 'user'
+                                ? 'bg-gray-900 text-white rounded-[2rem] rounded-tr-none'
+                                : 'bg-white text-gray-900 rounded-[2rem] rounded-tl-none'
+                                }`}>
+                                {msg.text}
+                            </div>
+                        </motion.div>
+                    ))}
+                    {isTyping && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="flex justify-start"
+                        >
+                            <div className="bg-white p-5 rounded-[2rem] rounded-tl-none shadow-[4px_4px_0px_rgba(0,0,0,1)] border-2 border-gray-900 flex items-center gap-2 h-[60px]">
+                                <span className="w-3 h-3 bg-gray-900 rounded-full animate-bounce"></span>
+                                <span className="w-3 h-3 bg-gray-900 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+                                <span className="w-3 h-3 bg-gray-900 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
                 <div ref={messagesEndRef} />
             </div>
 
             {/* Input */}
-            <div className="p-5 bg-white/70 backdrop-blur-md border-t border-white/30">
+            <div className="p-5 bg-white border-t-2 border-gray-900">
                 <div className="flex gap-3">
                     <input
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                        placeholder="Type your message..."
-                        className="flex-1 p-4 rounded-2xl border border-white/60 bg-white/60 focus:outline-none focus:border-pastel-peach-dark focus:ring-2 focus:ring-pastel-peach/20 transition-all placeholder-gray-400 text-gray-700"
+                        onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                        placeholder="Tell me what's on your mind today..."
+                        disabled={isTyping}
+                        className="flex-1 p-4 rounded-xl border-2 border-gray-900 bg-white focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] transition-all placeholder-gray-500 font-bold text-gray-900 disabled:opacity-50"
                     />
                     <button
                         onClick={handleSend}
-                        className="p-4 bg-gradient-to-r from-pastel-peach-dark to-pastel-lavender-dark text-white rounded-2xl hover:shadow-lg hover:shadow-pastel-peach/40 transform hover:scale-105 active:scale-95 transition-all duration-300"
+                        disabled={isTyping || !input.trim()}
+                        className="p-4 bg-pastel-mint-dark text-white rounded-xl border-2 border-gray-900 shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] transition-all duration-200 disabled:opacity-50 flex items-center justify-center group disabled:translate-y-0 disabled:shadow-[4px_4px_0px_rgba(0,0,0,1)]"
                     >
-                        <Send className="w-6 h-6" />
+                        <Send className="w-6 h-6 transform group-hover:-rotate-12 transition-transform" />
                     </button>
                 </div>
             </div>

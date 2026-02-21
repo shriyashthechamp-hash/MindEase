@@ -1,59 +1,55 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { PrismaClient } from '@prisma/client';
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import OpenAI from "openai";
 
 dotenv.config();
 
 const app = express();
-
-// Prisma Client with Serverless Global Reuse Pattern
-const prisma = global.prisma || new PrismaClient();
-if (process.env.NODE_ENV !== "production") global.prisma = prisma;
-
 app.use(cors());
 app.use(express.json());
 
-// Health Check
-app.get('/', (req, res) => {
-    res.send('MindEase API is running 🌿');
+console.log("GROQ KEY:", process.env.GROQ_API_KEY);
+
+// IMPORTANT: Use Groq baseURL
+const groq = new OpenAI({
+  apiKey: process.env.GROQ_API_KEY,
+  baseURL: "https://api.groq.com/openai/v1",
 });
 
-// Real Routes
-app.get('/api/psychologists', async (req, res) => {
-    try {
-        const psychologists = await prisma.psychologist.findMany();
-        res.json(psychologists);
-    } catch (error) {
-        console.error('Error fetching psychologists:', error);
-        res.status(500).json({ error: 'Failed to fetch psychologists' });
+app.get("/", (req, res) => {
+  res.send("MindEase backend running");
+});
+
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { message } = req.body || {};
+    if (!message) {
+      return res.status(400).json({ reply: "Message missing" });
     }
+
+    const completion = await groq.chat.completions.create({
+      model: "llama3-8b-8192",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are MindEase AI, a calm Gen-Z emotional wellness companion.",
+        },
+        { role: "user", content: message },
+      ],
+    });
+
+    res.json({
+      reply: completion.choices[0].message.content,
+    });
+  } catch (err) {
+    console.error("GROQ ERROR FULL:", err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.post('/api/sessions', async (req, res) => {
-    const { psychologistId, date, time, type } = req.body;
-
-    try {
-        if (!psychologistId || !date || !time) {
-            return res.status(400).json({ error: 'Missing required fields' });
-        }
-
-        console.log(`Booking received: Psych ${psychologistId} on ${date} at ${time}`);
-
-        // Simulate DB delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        res.status(201).json({ message: "Session booked successfully", id: Math.floor(Math.random() * 1000) });
-    } catch (error) {
-        console.error('Error booking session:', error);
-        res.status(500).json({ error: 'Failed to book session' });
-    }
+const PORT = 5001;
+app.listen(PORT, () => {
+  console.log(`🚀 MindEase backend running on http://localhost:${PORT}`);
 });
-
-app.post('/api/moods', async (req, res) => {
-    const { mood, note } = req.body;
-    console.log(`Received mood: ${mood}, Note: ${note}`);
-    res.status(201).json({ message: "Mood logged successfully" });
-});
-
-export default app;

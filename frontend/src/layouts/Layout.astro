@@ -1,6 +1,8 @@
 ---
 import '../styles/global.css';
 
+import NightModeOverlay from '../components/NightModeOverlay';
+
 interface Props {
 	title: string;
 }
@@ -18,7 +20,8 @@ const { title } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
-	<body class="bg-background min-h-screen flex flex-col">
+	<body class="bg-background min-h-screen flex flex-col relative">
+		<NightModeOverlay client:only="react" />
 		<slot />
 	</body>
 </html>
